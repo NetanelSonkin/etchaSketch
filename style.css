@@ -1,17 +1,39 @@
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 #container{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     padding: 0px;
-    width: 400px;
-    height: 400px;
-    border: solid 1px;
+    width: 502px;
+    height: 502px;
+    border: solid 1px black;
+    background-color: azure;
 }
 
-.newDiv {
-    border: solid 2px;
-    width: 25px;
-    height: 25px;
+#header{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameTitle {
+    padding: 10px;
+    margin: 0px;
+}
+
+.instructions {
+    padding: 10px;
+    margin: 0px;
+}
+
+.newTile {
     box-sizing: border-box;
 }
