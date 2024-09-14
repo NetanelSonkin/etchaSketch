@@ -28,18 +28,18 @@ const showCustomPrompt = () => {
 
     const colorOptions = {
         'Aqua': '#00FFFF',
-        'Red': 'FF0000',
-        'Maroon': '800000',
-        'Black': '000000',
-        'Blue': '0000FF',
-        'Green': '008000',
-        'Yellow': 'FFFF00',
+        'Red': '#FF0000',
+        'Maroon': '#800000',
+        'Black': '#000000',
+        'Blue': '#0000FF',
+        'Green': '#008000',
+        'Yellow': '#FFFF00',
         'Peach': '#d68874',
         'Rose': '#D7707E',
         'Purple': '#b67fdd',
-        'fuchsia': '#FF00FF',
-        'lime': '#00FF00',
-        'orange': '#FFA500'
+        'Fuchsia': '#FF00FF',
+        'Lime': '#00FF00',
+        'Orange': '#FFA500'
     };
 
     for(const [name, hex] of Object.entries(colorOptions)) {
