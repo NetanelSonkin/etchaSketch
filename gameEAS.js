@@ -1,25 +1,103 @@
+const showCustomPrompt = () => {
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
+    document.querySelector('#wrapper').appendChild(overlay);
 
-const startGame = (event) => {
+    const modal = document.createElement('div');
+    modal.classList.add('custom-modal');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+    
+    const boxLabel = document.createElement('label');
+    boxLabel.setAttribute('for', 'boxInput');
+    boxLabel.textContent = "Enter the number of tiles in a row (1-100):";
+
+    const boxInput = document.createElement('input');
+    boxInput.setAttribute('type','number');
+    boxInput.setAttribute('id','boxInput');
+    boxInput.setAttribute('min','1');
+    boxInput.setAttribute('max','100');
+
+    const colorLabel = document.createElement('label');
+    colorLabel.setAttribute('for', 'colorInput');
+    colorLabel.textContent = 'Choose a color:';
+
+    const colorSelect = document.createElement('select');
+    colorSelect.setAttribute('id','colorInput')
+
+    const colorOptions = {
+        'Aqua': '#00FFFF',
+        'Red': 'FF0000',
+        'Maroon': '800000',
+        'Black': '000000',
+        'Blue': '0000FF',
+        'Green': '008000',
+        'Yellow': 'FFFF00',
+        'Peach': '#d68874',
+        'Rose': '#D7707E',
+        'Purple': '#b67fdd',
+        'fuchsia': '#FF00FF',
+        'lime': '#00FF00',
+        'orange': '#FFA500'
+    };
+
+    for(const [name, hex] of Object.entries(colorOptions)) {
+        const option = document.createElement('option');
+        option.setAttribute('value', hex);
+        option.textContent = name;
+        colorSelect.appendChild(option);
+    }
+    
+
+    const submitBtn = document.createElement('button');
+    submitBtn.setAttribute('id', 'submitInput');
+    submitBtn.textContent = 'Submit';
+
+    modalContent.append(boxLabel, boxInput, colorLabel, colorSelect, submitBtn);
+    modal.appendChild(modalContent); // Ensure modalContent is appended to modal
+    document.querySelector('#wrapper').appendChild(modal);
+
+    submitBtn.addEventListener('click', () => {
+        const userInput = parseInt(boxInput.value);
+        const selectedColor = colorSelect.value;
+
+        if (isNaN(userInput) || userInput < 1 || userInput > 100) {
+            alert("Invalid input! Please enter a number between 1 and 100.");
+            return;
+        }
+
+        document.querySelector('#wrapper').removeChild(modal);
+        document.querySelector('#wrapper').removeChild(overlay);
+
+        startGame(userInput, selectedColor);
+    });
+};
+
+const startGame = (userInput, selectedColor) => {
     startBtn.removeEventListener('click', startGame);
+    startBtn.setAttribute('disabled', 'true');
     clearGrid();
+ 
+    const container = document.querySelector('#container');
+    const tileSize = 500 / userInput;
 
-    let userInput = (prompt("Please Enter the number of boxes you want in a row between numbers 1 and 100: ", "0"));
-    let gridTile;
     const createTile = () => {
-            gridTile = document.createElement('div');
+            const gridTile = document.createElement('div');
             gridTile.className = 'newTile';
-
+            gridTile.style.width = `${tileSize}px`;
+            gridTile.style.height = `${tileSize}px`;
             return gridTile;
     }
 
-    const createGrid = () => {
-        const container = document.querySelector('#container');
+    
 
-        for(let i = 0; i < 256; i++) {
+    const createGrid = () => {
+        for(let i = 0; i < userInput * userInput; i++) {
             const div = createTile();
             container.appendChild(div);
             div.addEventListener('mouseenter', () => {
-            div.style.backgroundColor = 'aqua';
+            div.style.backgroundColor = selectedColor;
             });
         }
         
@@ -29,12 +107,13 @@ const startGame = (event) => {
 
 const clearGrid = () => {
     const container = document.querySelector('#container');
-    const tiles = container.querySelectorAll('.newTile');
-    tiles.forEach(tile => tile.remove());
+    container.innerHTML = '';
 }
 
+
 const resetGame = () => {
-    startGame();
+    showCustomPrompt();
+    startBtn.removeAttribute('disabled');
 }
 
 const wrapper = document.querySelector("#wrapper");
@@ -52,7 +131,7 @@ btnList.setAttribute("class", "btnList");
 startList.appendChild(startBtn);
 resetList.appendChild(resetBtn);
 btnList.append(startList,resetList);
-wrapper.insertBefore(btnList,container);
+wrapper.insertBefore(btnList, document.querySelector('#container'));
 
-startBtn.addEventListener('click', startGame);
+startBtn.addEventListener('click', showCustomPrompt);
 resetBtn.addEventListener('click', resetGame);
