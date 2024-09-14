@@ -74,6 +74,16 @@ const showCustomPrompt = () => {
     });
 };
 
+let isMouseDown = false;
+
+document.addEventListener('mousedown', () => {
+    isMouseDown = true;
+});
+
+document.addEventListener('mouseup', () => {
+    isMouseDown = false;
+});
+
 const startGame = (userInput, selectedColor) => {
     startBtn.removeEventListener('click', startGame);
     startBtn.setAttribute('disabled', 'true');
@@ -96,8 +106,14 @@ const startGame = (userInput, selectedColor) => {
         for(let i = 0; i < userInput * userInput; i++) {
             const div = createTile();
             container.appendChild(div);
-            div.addEventListener('mouseenter', () => {
-            div.style.backgroundColor = selectedColor;
+            div.addEventListener('mousedown', () => {
+                div.style.backgroundColor = selectedColor;
+            });
+
+            div.addEventListener('mousemove', () => {
+                if (isMouseDown) {
+                    div.style.backgroundColor = selectedColor;
+                }
             });
         }
         
@@ -122,6 +138,9 @@ const startList = document.createElement("li");
 const resetList = document.createElement("li");
 const startBtn = document.createElement("button");
 const resetBtn = document.createElement("button");
+const instructions = document.createElement('div');
+instructions.setAttribute('class', 'instructions');
+instructions.textContent = "Hold mouse button in order to color the tiles.";
 
 startBtn.setAttribute("class", "startGame");
 resetBtn.setAttribute("class", "resetGame");
@@ -131,6 +150,7 @@ btnList.setAttribute("class", "btnList");
 startList.appendChild(startBtn);
 resetList.appendChild(resetBtn);
 btnList.append(startList,resetList);
+header.appendChild(instructions);
 wrapper.insertBefore(btnList, document.querySelector('#container'));
 
 startBtn.addEventListener('click', showCustomPrompt);
