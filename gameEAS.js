@@ -1,3 +1,11 @@
+let startBtn;
+let resetBtn;
+let eraseContainer;
+let eraseInput;
+let eraseLabel;
+let eraseSpan;
+let eraseSwitchDesc;
+
 // Function to darken the color
 const darkenColor = (color, amount) => {
     let r, g, b;
@@ -171,14 +179,15 @@ document.addEventListener('mouseup', () => {
     isMouseDown = false;
 });
 
-// Function to start the game
 const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectEnabled) => {
     startBtn.removeEventListener('click', startGame);
     startBtn.setAttribute('disabled', 'true');
     clearGrid();
-
     const container = document.querySelector('#container');
     const tileSize = 500 / userInput;
+
+    // Initialize erase color
+    const eraseColor = '#f0ffffd9';
 
     const createTile = () => {
         const gridTile = document.createElement('div');
@@ -193,63 +202,75 @@ const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectE
         for (let i = 0; i < userInput * userInput; i++) {
             const div = createTile();
             container.appendChild(div);
-    
-            // Mouse down - color the tile
+
             div.addEventListener('mousedown', () => {
-                if (isDarkenEffectEnabled) {
-                    div.style.backgroundColor = selectedColor;
-                } else if (isRandomizeEnabled) {
-                    div.style.backgroundColor = getRandomColor();
+                if (eraseInput.checked) {
+                    // Erase tile if erase switch is enabled
+                    div.style.backgroundColor = eraseColor;
                 } else {
-                    div.style.backgroundColor = selectedColor;
+                    // Apply selected color based on switches
+                    applyTileColor(div);
                 }
             });
-    
-            // Mousemove - apply color when the mouse is down
+            
             div.addEventListener('mousemove', () => {
                 if (isMouseDown) {
-                    if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
-                        div.style.backgroundColor = selectedColor;
+                    if (eraseInput.checked) {
+                        // Erase tile on mousemove if erase switch is enabled
+                        div.style.backgroundColor = eraseColor;
+                    } else {
+                        // Apply selected color based on switches
+                        applyTileColor(div);
                     }
                 }
             });
-    
-            // Mouseleave - apply effects when the mouse leaves the tile
+            
             div.addEventListener('mouseleave', () => {
                 if (isMouseDown) {
-                    if (isDarkenEffectEnabled) {
-                        // Darken the color if darken effect is enabled
-                        const interactions = parseInt(div.dataset.interactions);
-                        if (interactions < 10) {
-                            const darkenAmount = 0.1 * (interactions + 1); // Increase darkness with each interaction
-                            const currentColor = div.style.backgroundColor || selectedColor;
-                            const newColor = darkenColor(currentColor, darkenAmount);
-                            div.style.backgroundColor = newColor;
-                            div.dataset.interactions = interactions + 1;
-                        }
-                    } else if (isRandomizeEnabled) {
-                        // Randomize the color if randomize effect is enabled
-                        div.style.backgroundColor = getRandomColor();
+                    if (eraseInput.checked) {
+                        // Erase tile on mouseleave if erase switch is enabled
+                        div.style.backgroundColor = eraseColor;
+                    } else {
+                        // Apply selected color based on switches
+                        applyTileColor(div);
                     }
                 }
             });
         }
     };
 
+    const applyTileColor = (tile) => {
+        if (isDarkenEffectEnabled) {
+            const interactions = parseInt(tile.dataset.interactions);
+            if (interactions < 10) {
+                const darkenAmount = 0.1 * (interactions + 1);
+                const newColor = darkenColor(selectedColor, darkenAmount);
+                tile.style.backgroundColor = newColor;
+                tile.dataset.interactions = interactions + 1;
+            }
+        } else if (isRandomizeEnabled) {
+            tile.style.backgroundColor = getRandomColor();
+        } else {
+            tile.style.backgroundColor = selectedColor;
+        }
+    };
+
     createGrid();
 };
 
-// Function to clear the grid
 const clearGrid = () => {
+    console.log('Clearing grid...'); // Debug statement
     const container = document.querySelector('#container');
     container.innerHTML = '';
 };
 
-// Function to reset the game
 const resetGame = () => {
     showCustomPrompt();
     startBtn.removeAttribute('disabled');
+    eraseInput.checked = false; // Ensure this doesn't trigger unexpected behavior
 };
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const wrapper = document.querySelector("#wrapper");
@@ -260,16 +281,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnList = document.createElement("ul");
     const startList = document.createElement("li");
     const resetList = document.createElement("li");
+    eraseContainer = document.createElement("li");
     startBtn = document.createElement("button");  // Initialize globally declared startBtn
     resetBtn = document.createElement("button");  // Initialize resetBtn
     startBtn.setAttribute("class", "startGame");
     resetBtn.setAttribute("class", "resetGame");
     startBtn.textContent = "Start Game!";
     resetBtn.textContent = "Reset";
+    
+    eraseContainer.classList.add('switch-container');
+
+    eraseLabel = document.createElement('label');
+    eraseLabel.classList.add('switch');
+
+    eraseInput = document.createElement('input');
+    eraseInput.setAttribute('type', 'checkbox');
+    eraseSpan = document.createElement('span');
+
+    eraseLabel.appendChild(eraseInput);
+    eraseLabel.appendChild(eraseSpan);
+
+    eraseSwitchDesc = document.createElement('div');
+    eraseSwitchDesc.classList.add('eraseSwitchDesc');
+    eraseSwitchDesc.textContent = 'Erase Switch';
+
+    eraseContainer.appendChild(eraseSwitchDesc);
+    eraseContainer.appendChild(eraseLabel);
+    
     startList.appendChild(startBtn);
     resetList.appendChild(resetBtn);
     btnList.setAttribute("class", "btnList");
-    btnList.append(startList, resetList);
+    btnList.append(eraseContainer, startList, resetList);
 
     // Create and add the instructions
     const instructions = document.createElement('div');
@@ -289,6 +331,28 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Header element not found');
     }
 
+    eraseInput.addEventListener('change', () => {
+        const isEraseEnabled = eraseInput.checked;
+        const tiles = document.querySelectorAll('.newTile');
+        
+        tiles.forEach(tile => {
+            if (isEraseEnabled) {
+                tile.style.backgroundColor = '#f0ffffd9';
+            } else {
+                // Reapply the color based on current state
+                const interactions = parseInt(tile.dataset.interactions);
+                if (isDarkenEffectEnabled && interactions < 10) {
+                    const darkenAmount = 0.1 * (interactions + 1);
+                    tile.style.backgroundColor = darkenColor(selectedColor, darkenAmount);
+                } else if (isRandomizeEnabled) {
+                    tile.style.backgroundColor = getRandomColor();
+                } else {
+                    tile.style.backgroundColor = selectedColor;
+                }
+            }
+        });
+    });
+    
     // Event listeners for buttons
     startBtn.addEventListener('click', showCustomPrompt);
     resetBtn.addEventListener('click', resetGame);
