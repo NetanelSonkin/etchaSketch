@@ -97,7 +97,7 @@ const showCustomPrompt = () => {
 
     const switchDesc = document.createElement('div');
     switchDesc.classList.add('switchDesc');
-    switchDesc.textContent = 'Randomize colors';
+    switchDesc.textContent = 'Fancy Mode';
 
     switchContainer.appendChild(switchLabel);
     switchContainer.appendChild(switchDesc);
