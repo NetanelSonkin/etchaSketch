@@ -5,6 +5,10 @@ let eraseInput;
 let eraseLabel;
 let eraseSpan;
 let eraseSwitchDesc;
+// Declare global variables to track the state
+let isDarkenEffectEnabled = false;
+let isRandomizeEnabled = false;
+let selectedColor = '#f0ffffd9'; // Default color
 
 // Function to darken the color
 const darkenColor = (color, amount) => {
@@ -27,7 +31,7 @@ const darkenColor = (color, amount) => {
     g = Math.max(0, Math.floor(g * (1 - amount)));
     b = Math.max(0, Math.floor(b * (1 - amount)));
 
-    return `rgb(${r}, ${g}, ${b})`;
+    return `rgb(${r}, ${g}, ${b})`; // Use backticks here
 };
 
 // Function to get a random color from options
@@ -35,8 +39,9 @@ const getRandomColor = () => {
     const randomR = Math.floor(Math.random() * 256);
     const randomG = Math.floor(Math.random() * 256);
     const randomB = Math.floor(Math.random() * 256);
-    return `rgb(${randomR}, ${randomG}, ${randomB})`;
+    return `rgb(${randomR}, ${randomG}, ${randomB})`; // Use backticks here
 };
+
 
 // Function to show custom prompt
 const showCustomPrompt = () => {
@@ -131,7 +136,7 @@ const showCustomPrompt = () => {
     darkenSwitchContainer.appendChild(darkenSwitchDesc);
 
     const submitBtn = document.createElement('button');
-    submitBtn.setAttribute('id', 'submitInput');
+    submitBtn.setAttribute('class', 'submitInput');
     submitBtn.textContent = 'Submit';
 
     modalContent.append(boxLabel, boxInput, colorLabel, colorSelect, switchContainer, darkenSwitchContainer, submitBtn);
@@ -153,9 +158,9 @@ const showCustomPrompt = () => {
 
     submitBtn.addEventListener('click', () => {
         const userInput = parseInt(boxInput.value);
-        const selectedColor = colorSelect.value;
-        const isRandomizeEnabled = switchInput.checked;
-        const isDarkenEffectEnabled = darkenSwitchInput.checked;
+        selectedColor = colorSelect.value;
+        isRandomizeEnabled = switchInput.checked;
+        isDarkenEffectEnabled = darkenSwitchInput.checked;
 
         if (isNaN(userInput) || userInput < 1 || userInput > 100) {
             alert("Invalid input! Please enter a number between 1 and 100.");
@@ -182,19 +187,18 @@ document.addEventListener('mouseup', () => {
 const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectEnabled) => {
     startBtn.removeEventListener('click', startGame);
     startBtn.setAttribute('disabled', 'true');
-    clearGrid();
+    clearGrid();  // Clears the previous grid
     const container = document.querySelector('#container');
     const tileSize = 500 / userInput;
 
-    // Initialize erase color
     const eraseColor = '#f0ffffd9';
 
     const createTile = () => {
         const gridTile = document.createElement('div');
         gridTile.className = 'newTile';
-        gridTile.style.width = `${tileSize}px`;
-        gridTile.style.height = `${tileSize}px`;
-        gridTile.dataset.interactions = 0; // To track darkening interactions
+        gridTile.style.width = `${tileSize}px`;  // Use backticks here
+        gridTile.style.height = `${tileSize}px`; // Use backticks here
+        gridTile.dataset.interactions = 0;
         return gridTile;
     };
 
@@ -205,10 +209,8 @@ const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectE
 
             div.addEventListener('mousedown', () => {
                 if (eraseInput.checked) {
-                    // Erase tile if erase switch is enabled
                     div.style.backgroundColor = eraseColor;
                 } else {
-                    // Apply selected color based on switches
                     applyTileColor(div);
                 }
             });
@@ -216,10 +218,8 @@ const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectE
             div.addEventListener('mousemove', () => {
                 if (isMouseDown) {
                     if (eraseInput.checked) {
-                        // Erase tile on mousemove if erase switch is enabled
                         div.style.backgroundColor = eraseColor;
                     } else {
-                        // Apply selected color based on switches
                         applyTileColor(div);
                     }
                 }
@@ -228,14 +228,13 @@ const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectE
             div.addEventListener('mouseleave', () => {
                 if (isMouseDown) {
                     if (eraseInput.checked) {
-                        // Erase tile on mouseleave if erase switch is enabled
                         div.style.backgroundColor = eraseColor;
                     } else {
-                        // Apply selected color based on switches
                         applyTileColor(div);
                     }
                 }
             });
+            
         }
     };
 
@@ -258,10 +257,12 @@ const startGame = (userInput, selectedColor, isRandomizeEnabled, isDarkenEffectE
     createGrid();
 };
 
+
 const clearGrid = () => {
-    console.log('Clearing grid...'); // Debug statement
     const container = document.querySelector('#container');
-    container.innerHTML = '';
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
 };
 
 const resetGame = () => {
@@ -334,23 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
     eraseInput.addEventListener('change', () => {
         const isEraseEnabled = eraseInput.checked;
         const tiles = document.querySelectorAll('.newTile');
-        
-        tiles.forEach(tile => {
-            if (isEraseEnabled) {
-                tile.style.backgroundColor = '#f0ffffd9';
-            } else {
-                // Reapply the color based on current state
-                const interactions = parseInt(tile.dataset.interactions);
-                if (isDarkenEffectEnabled && interactions < 10) {
-                    const darkenAmount = 0.1 * (interactions + 1);
-                    tile.style.backgroundColor = darkenColor(selectedColor, darkenAmount);
-                } else if (isRandomizeEnabled) {
-                    tile.style.backgroundColor = getRandomColor();
-                } else {
-                    tile.style.backgroundColor = selectedColor;
-                }
-            }
-        });
     });
     
     // Event listeners for buttons

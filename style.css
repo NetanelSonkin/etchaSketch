@@ -55,9 +55,24 @@
     border: none;
     cursor: pointer;
     border-radius: 20px;
+    height: 40px;
+    width: auto;
 }
 
 .startGame:hover {
+    background-color: #45a049;
+}
+
+.submitInput {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.submitInput:hover {
     background-color: #45a049;
 }
 
@@ -68,6 +83,8 @@
     border: none;
     cursor: pointer;
     border-radius: 20px;
+    height: 40px;
+    width: auto;
 
 }
 
@@ -97,15 +114,9 @@
 
 #boxInput, #colorInput {
     padding: 5px;
+    border-radius: 10px;
 }
 
-button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
 
 button:hover {
     background-color: #45a049;
@@ -148,6 +159,10 @@ button:hover {
     opacity: 0;
     width: 0;
     height: 0;
+}
+
+.submitInput {
+    border-radius: 20px;
 }
 
 .switch span {
