@@ -84,11 +84,26 @@
     cursor: pointer;
     border-radius: 20px;
     height: 40px;
-    width: auto;
+    width: 80px;
 
 }
 
 .resetGame:hover {
+    background-color: #e53935;
+}
+
+.clear-button {
+    padding: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    height: 40px;
+    width: auto;
+}
+
+.clear-button:hover {
     background-color: #e53935;
 }
 
@@ -193,8 +208,8 @@ button:hover {
 .switch span:after {
     content: '';
     position: absolute;
-    top: 7px;
-    left: 32px;
+    top: 8px;
+    left: 50px;
     width: 8px;
     height: 18px;
     border-radius: 40%;
@@ -211,7 +226,7 @@ button:hover {
 .switch input:checked + span:before {
     width: 0;
     border-radius: 3px;
-    margin-left: 50px;
+    margin-left: 60px;
     border-width: 3px;
     background: #fff;
 }
