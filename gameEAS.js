@@ -625,10 +625,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   clearBtn.addEventListener('click', () => {
       console.log('Clear button clicked');
+      eraseInput.checked = false;
       document.querySelectorAll('.newTile').forEach(tile => {
           tile.style.backgroundColor = eraseColor;  // Apply the erase color if needed
           tile.dataset.interactions = 0; // Reset interactions when clearing
-  
+        
           // Reattach event listeners
           tile.addEventListener("mousedown", () => {
               if (eraseInput.checked) {
