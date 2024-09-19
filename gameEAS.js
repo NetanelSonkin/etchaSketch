@@ -234,7 +234,9 @@ document.addEventListener("mousemove", (event) => {
         }
         if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
             colorChangeContainer.style.display = "flex"; // Show color change container
-        } else {
+        } else if (isDarkenEffectEnabled && !isRandomizeEnabled){
+          colorChangeContainer.style.display - 'flex';  
+        }else{
             colorChangeContainer.style.display = "none"; // Hide color change container
         }
 
