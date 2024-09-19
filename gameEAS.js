@@ -154,14 +154,20 @@ const showCustomPrompt = () => {
 
   // Toggle behavior for exclusivity of switches
   switchInput.addEventListener("change", () => {
+    const colorChangeContainer = document.querySelector(".color-change-container");
     if (switchInput.checked) {
       darkenSwitchInput.checked = false; // Disable darken if random is checked
+      colorChangeContainer.style.display = "none"; // Hide color change container
+    } else {
+      colorChangeContainer.style.display = "flex"; // Show color change container
     }
   });
 
   darkenSwitchInput.addEventListener("change", () => {
+    const colorChangeContainer = document.querySelector(".color-change-container");
     if (darkenSwitchInput.checked) {
       switchInput.checked = false; // Disable random if darken is checked
+      colorChangeContainer.style.display = "flex"; // Show color change container
     }
   });
 
@@ -179,6 +185,15 @@ const showCustomPrompt = () => {
     document.querySelector("#wrapper").removeChild(modal);
     document.querySelector("#wrapper").removeChild(overlay);
 
+    const colorChangeContainer = document.querySelector(".color-change-container");
+    if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+      colorChangeContainer.style.display = "flex"; // Show color change container
+    } else if (isDarkenEffectEnabled && !isRandomizeEnabled){
+      colorChangeContainer.style.display = "flex";
+    }else{
+      colorChangeContainer.style.display = "none"; // Hide color change container
+    }
+
     startGame(
       userInput,
       selectedColor,
@@ -193,10 +208,210 @@ let isMouseDown = false;
 document.addEventListener("mousedown", () => {
   isMouseDown = true;
 });
+document.addEventListener("mousemove", (event) => {
+  if (isMouseDown) {
+    const tile = event.target;
+    if (tile.classList.contains("newTile")) {
+      if (eraseInput.checked) {
+        tile.style.backgroundColor = eraseColor;
+        tile.dataset.interactions = 0; // Reset interactions when erasing
 
+        // Disable colorChangeContainer when Fancy Mode is enabled
+        const colorChangeContainer = document.querySelector(".color-change-container");
+        const colorChangeLabel = document.querySelector("label[for='colorChangeInput']");
+        const colorChangeSelect = document.querySelector("#colorChangeInput");
+
+        if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+            colorChangeContainer.style.display = "flex"; // Show color change container
+            colorChangeLabel.style.display = "flex"; // Ensure the label is shown
+            colorChangeSelect.style.display = "flex"; // Ensure the select is shown
+            colorChangeLabel.style.display = "flex"; // Ensure the label is shown
+            colorChangeSelect.style.display = "flex"; // Ensure the select is shown
+        } else if (isDarkenEffectEnabled) {
+          colorChangeContainer.style.display = "flex"; // Show color change container
+        } else {
+          colorChangeContainer.style.display = "none"; // Hide color change container
+        }
+        if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+            colorChangeContainer.style.display = "flex"; // Show color change container
+        } else {
+            colorChangeContainer.style.display = "none"; // Hide color change container
+        }
+
+        // Ensure color change container is shown when reset and fancy mode is off
+        if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+            colorChangeContainer.style.display = "flex"; // Show color change container
+        }
+        resetBtn.addEventListener("click", () => {
+            if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+            colorChangeContainer.style.display = "flex"; // Show color change container
+            }
+        });
+        if (isRandomizeEnabled) {
+            if (colorChangeLabel && colorChangeLabel.parentNode === colorChangeContainer) {
+          colorChangeContainer.removeChild(colorChangeLabel);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+          colorChangeContainer.removeChild(colorChangeSelect);
+            }
+        } else {
+            if (!colorChangeContainer.contains(colorChangeLabel)) {
+          colorChangeContainer.appendChild(colorChangeLabel);
+            }
+            if (!colorChangeContainer.contains(colorChangeSelect)) {
+          colorChangeContainer.appendChild(colorChangeSelect);
+            }
+        }
+        if (!isRandomizeEnabled) {
+            selectedColor = document.querySelector("#colorChangeInput").value;
+        }
+        if (!isRandomizeEnabled && !isDarkenEffectEnabled) {
+            colorChangeContainer.style.display = "flex"; // Show color change container
+        }
+        if (isRandomizeEnabled) {
+            if (colorChangeLabel && colorChangeLabel.parentNode === colorChangeContainer) {
+                colorChangeContainer.removeChild(colorChangeLabel);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeSelect);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeSelect);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeSelect);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeSelect);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeSelect);
+            }
+            if (colorChangeLabel && colorChangeLabel.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeLabel);
+            }
+            if (colorChangeLabel && colorChangeLabel.parentNode === colorChangeContainer) {
+              colorChangeContainer.removeChild(colorChangeLabel);
+            }
+            if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+            colorChangeContainer.removeChild(colorChangeSelect);
+            }
+          if (colorChangeSelect && colorChangeSelect.parentNode === colorChangeContainer) {
+            colorChangeContainer.removeChild(colorChangeSelect);
+          }
+        }
+        if (!isRandomizeEnabled) {
+          selectedColor = document.querySelector("#colorChangeInput").value;
+        }
+      } else {
+        if (isDarkenEffectEnabled) {
+          const currentColor = tile.style.backgroundColor && tile.style.backgroundColor !== eraseColor ? tile.style.backgroundColor : selectedColor;
+          let interactions = parseInt(tile.dataset.interactions) || 0;
+          if (currentColor === eraseColor || currentColor === "") {
+            tile.style.backgroundColor = selectedColor;
+            tile.dataset.interactions = 1;
+          } else {
+            if (interactions === 0) {
+              tile.style.backgroundColor = selectedColor;
+              tile.dataset.interactions = 1;
+            } else {
+              tile.style.backgroundColor = darkenColor(currentColor, 0.1);
+              tile.dataset.interactions = interactions + 1;
+            }
+          }
+        } else {
+          applyTileColor(tile);
+        }
+      }
+    }
+  }
+});
 document.addEventListener("mouseup", () => {
   isMouseDown = false;
 });
+
+
+const eraseColor = "#f0ffffd9"; // Moved outside the startGame function
+
+document.addEventListener("DOMContentLoaded", () => {
+  // ... other code ...
+
+  clearBtn = document.createElement('button');
+  clearBtn.textContent = 'Clear Grid';
+  clearBtn.setAttribute('class', 'clear-button');
+
+  // ... other code ...
+
+  clearBtn.addEventListener('click', () => {
+    console.log('Clear button clicked');
+    document.querySelectorAll('.newTile').forEach(tile => {
+      tile.style.backgroundColor = eraseColor;  // Apply the erase color if needed
+      tile.dataset.interactions = 0; // Reset interactions when clearing
+
+      // Reattach event listeners
+      tile.addEventListener("mousedown", () => {
+        if (eraseInput.checked) {
+          tile.style.backgroundColor = eraseColor;
+          tile.dataset.interactions = 0; // Reset interactions when erasing
+        } else {
+          if (isDarkenEffectEnabled) {
+            tile.style.backgroundColor = selectedColor; // Apply the selected color first
+            tile.dataset.interactions = 0; // Reset interactions when darken mode is enabled
+          } else {
+            applyTileColor(tile);
+          }
+        }
+      });
+
+      tile.addEventListener("mousemove", () => {
+        if (isMouseDown) {
+          if (eraseInput.checked) {
+            tile.style.backgroundColor = eraseColor;
+            tile.dataset.interactions = 0; // Reset interactions when erasing
+          } else {
+            applyTileColor(tile);
+          }
+        }
+      });
+
+      tile.addEventListener("mouseleave", () => {
+        if (isMouseDown) {
+          if (eraseInput.checked) {
+            tile.style.backgroundColor = eraseColor;
+            tile.dataset.interactions = 0; // Reset interactions when erasing
+          } else {
+            applyTileColor(tile);
+          }
+        }
+      });
+    });
+  });
+
+  // ... other code ...
+});
+const applyTileColor = (tile) => {
+  if (isRandomizeEnabled) {
+    tile.style.backgroundColor = getRandomColor();
+  } else if (isDarkenEffectEnabled) {
+    const currentColor = tile.style.backgroundColor && tile.style.backgroundColor !== eraseColor ? tile.style.backgroundColor : selectedColor;
+    let interactions = parseInt(tile.dataset.interactions) || 0;
+    if (currentColor === eraseColor || currentColor === "") {
+      tile.style.backgroundColor = selectedColor;
+      tile.dataset.interactions = 1;
+    } else {
+      if (interactions === 0) {
+        tile.style.backgroundColor = selectedColor;
+        tile.dataset.interactions = 1;
+      } else {
+        tile.style.backgroundColor = darkenColor(currentColor, 0.1);
+        tile.dataset.interactions = interactions + 1;
+      }
+    }
+  } else {
+    tile.style.backgroundColor = selectedColor;
+    tile.dataset.interactions = 0; // Reset interactions when not in darken mode
+  }
+};
 
 const startGame = (
   userInput,
@@ -209,8 +424,6 @@ const startGame = (
   resetGrid(); // Clears the previous grid
   const container = document.querySelector("#container");
   const tileSize = 500 / userInput;
-
-  const eraseColor = "#f0ffffd9";
 
   const createTile = () => {
     const gridTile = document.createElement("div");
@@ -229,6 +442,7 @@ const startGame = (
       div.addEventListener("mousedown", () => {
         if (eraseInput.checked) {
           div.style.backgroundColor = eraseColor;
+          div.dataset.interactions = 0; // Reset interactions when erasing
         } else {
           applyTileColor(div);
         }
@@ -238,6 +452,7 @@ const startGame = (
         if (isMouseDown) {
           if (eraseInput.checked) {
             div.style.backgroundColor = eraseColor;
+            div.dataset.interactions = 0; // Reset interactions when erasing
           } else {
             applyTileColor(div);
           }
@@ -248,27 +463,12 @@ const startGame = (
         if (isMouseDown) {
           if (eraseInput.checked) {
             div.style.backgroundColor = eraseColor;
+            div.dataset.interactions = 0; // Reset interactions when erasing
           } else {
             applyTileColor(div);
           }
         }
       });
-    }
-  };
-
-  const applyTileColor = (tile) => {
-    if (isDarkenEffectEnabled) {
-      const interactions = parseInt(tile.dataset.interactions);
-      if (interactions < 10) {
-        const darkenAmount = 0.1 * (interactions + 1);
-        const newColor = darkenColor(selectedColor, darkenAmount);
-        tile.style.backgroundColor = newColor;
-        tile.dataset.interactions = interactions + 1;
-      }
-    } else if (isRandomizeEnabled) {
-      tile.style.backgroundColor = getRandomColor();
-    } else {
-      tile.style.backgroundColor = selectedColor;
     }
   };
 
@@ -287,8 +487,6 @@ const resetGame = () => {
   startBtn.removeAttribute("disabled");
   eraseInput.checked = false; // Ensure this doesn't trigger unexpected behavior
 };
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.querySelector("#wrapper");
@@ -335,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetListItem.appendChild(resetBtn);
   clearListItem.appendChild(clearBtn);
   btnList.setAttribute("class", "btnList");
-  btnList.append(eraseContainer, startListItem, resetListItem, clearBtn);
+  btnList.append(eraseContainer, startListItem, resetListItem, clearListItem);
 
   // Create and add the instructions
   const instructions = document.createElement("div");
@@ -355,19 +553,124 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Header element not found");
   }
 
+  // Add color change dropdown
+  const colorChangeContainer = document.createElement("div");
+  colorChangeContainer.classList.add("color-change-container");
+
+  const colorChangeLabel = document.createElement("label");
+  colorChangeLabel.setAttribute("for", "colorChangeInput");
+  colorChangeLabel.textContent = "Change color:";
+
+  const colorChangeSelect = document.createElement("select");
+  colorChangeSelect.setAttribute("id", "colorChangeInput");
+  colorChangeSelect.addEventListener("change", (event) => {
+    selectedColor = event.target.value;
+    colorChangeSelect.style.backgroundColor = selectedColor;
+
+    // Determine if the color is dark or light
+    const rgb = selectedColor.match(/\w\w/g).map((c) => parseInt(c, 16));
+    const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+
+    // Set text color based on brightness
+    colorChangeSelect.style.color = brightness < 128 ? "white" : "black";
+  });
+
+  const colorOptions = {
+    Aqua: "#00FFFF",
+    Red: "#FF0000",
+    Maroon: "#800000",
+    Black: "#000000",
+    Blue: "#0000FF",
+    Green: "#008000",
+    Yellow: "#FFFF00",
+    Peach: "#d68874",
+    Rose: "#D7707E",
+    Purple: "#b67fdd",
+    Fuchsia: "#FF00FF",
+    Lime: "#00FF00",
+    Orange: "#FFA500",
+  };
+
+  for (const [name, hex] of Object.entries(colorOptions)) {
+    const option = document.createElement("option");
+    option.setAttribute("value", hex);
+    option.textContent = name;
+    colorChangeSelect.appendChild(option);
+    if (hex === selectedColor) {
+      option.selected = true;
+    }
+  }
+
+  colorChangeContainer.appendChild(colorChangeLabel);
+  colorChangeContainer.appendChild(colorChangeSelect);
+  wrapper.insertBefore(colorChangeContainer, container);
+
+  // Event listener for color change
+  colorChangeSelect.addEventListener("change", (event) => {
+    selectedColor = event.target.value;
+    colorChangeSelect.style.backgroundColor = selectedColor;
+
+    // Determine if the color is dark or light
+    const rgb = selectedColor.match(/\w\w/g).map((c) => parseInt(c, 16));
+    const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+
+    // Set text color based on brightness
+    colorChangeSelect.style.color = brightness < 128 ? "white" : "black";
+  });
+
   eraseInput.addEventListener("change", () => {
     const isEraseEnabled = eraseInput.checked;
     const tiles = document.querySelectorAll(".newTile");
   });
 
   clearBtn.addEventListener('click', () => {
-    console.log('Clear button clicked');
-    document.querySelectorAll('.newTile').forEach(tile => {
-            tile.style.backgroundColor = '#f0ffffd9';  // Apply the erase color if needed
-    });
-});
+      console.log('Clear button clicked');
+      document.querySelectorAll('.newTile').forEach(tile => {
+          tile.style.backgroundColor = eraseColor;  // Apply the erase color if needed
+          tile.dataset.interactions = 0; // Reset interactions when clearing
+  
+          // Reattach event listeners
+          tile.addEventListener("mousedown", () => {
+              if (eraseInput.checked) {
+                  tile.style.backgroundColor = eraseColor;
+                  tile.dataset.interactions = 0; // Reset interactions when erasing
+              } else {
+                  if (isDarkenEffectEnabled) {
+                      tile.style.backgroundColor = selectedColor; // Apply the selected color first
+                  } else {
+                      applyTileColor(tile);
+                  }
+              }
+          });
+  
+          tile.addEventListener("mousemove", () => {
+              if (isMouseDown) {
+                  if (eraseInput.checked) {
+                      tile.style.backgroundColor = eraseColor;
+                      tile.dataset.interactions = 0; // Reset interactions when erasing
+                  } else {
+                      applyTileColor(tile);
+                  }
+              }
+          });
+  
+          tile.addEventListener("mouseleave", () => {
+              if (isMouseDown) {
+                  if (eraseInput.checked) {
+                      tile.style.backgroundColor = eraseColor;
+                      tile.dataset.interactions = 0; // Reset interactions when erasing
+                  } else {
+                      applyTileColor(tile);
+                  }
+              }
+          });
+      });
+  });
 
   // Event listeners for buttons
   startBtn.addEventListener("click", showCustomPrompt);
   resetBtn.addEventListener("click", resetGame);
+
+  // Create the modal
+  // createModal(); // Removed as it is not defined
 });

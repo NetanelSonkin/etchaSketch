@@ -290,6 +290,23 @@ body {
     background: #F5F9FF;
 }
 
+.color-change-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  
+  .color-change-container label {
+    font-weight: bold;
+  }
+  
+  #colorChangeInput {
+    padding: 5px;
+    border-radius: 20px;
+  }
+
 .dribbble {
     position: fixed;
     display: block;
